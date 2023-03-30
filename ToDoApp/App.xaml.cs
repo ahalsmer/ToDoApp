@@ -10,7 +10,7 @@ namespace ToDoApp
         {
             InitializeComponent();
 
-            MainPage = new ToDoPage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()

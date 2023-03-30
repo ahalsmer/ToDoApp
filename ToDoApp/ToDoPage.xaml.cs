@@ -17,19 +17,39 @@ namespace ToDoApp
         {
             InitializeComponent();
         }
+        protected override void OnAppearing()
+        {
+            var todo = (ToDo)BindingContext;
+            if (todo != null && !string.IsNullOrEmpty(todo.FileName)) 
+            { 
+                ToDoText.Text = File.ReadAllText(todo.FileName);
+            }
+        }
 
         private void OnSaveButton_Clicked(object sender, EventArgs e)
         {
-            var todo = new ToDo();
+            var todo = (ToDo)BindingContext;
+            todo.Text = ToDoText.Text;
+            if (string.IsNullOrEmpty(todo.FileName)) 
+            {
+                todo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), $"{Path.GetRandomFileName()}.notes.txt");
+            }
             todo.Text = ToDoText.Text;
             todo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), $"{Path.GetRandomFileName()}.notes.txt");
 
             File.WriteAllText(todo.FileName, todo.Text);
+            Navigation.PopModalAsync();
         }
 
         private void OnDeleteButton_Clicked(object sender, EventArgs e)
         {
-
+            var todo = (ToDo)BindingContext;
+            if (File.Exists(todo.FileName)) 
+            { 
+                File.Delete(todo.FileName);
+            }
+            ToDoText.Text = String.Empty;
+            Navigation.PopModalAsync();
         }
     }
 }
